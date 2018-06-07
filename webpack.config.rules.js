@@ -19,5 +19,11 @@ module.exports = function() {
             test: /\.(eot|svg|ttf|woff|woff2)$/,
             loader: 'file-loader?name=fonts/[hash].[ext]'
         }
+        ,
+        {
+            test: /\.html$/,
+            loader: 'html-loader',
+            exclude: /node_modules/
+        }
     ];
 };

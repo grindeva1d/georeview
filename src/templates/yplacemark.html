@@ -1,20 +1,16 @@
 <div class="balloon">
     <div class="header">
         <div><i class="fas fa-map-marker"></i></div>
-        <div class="address">{{address}}</div>
+        <div class="address">{{ properties.address }} </div>
         <div><i id="close" class="fas fa-plus fa-rotate-45"></i></div>
     </div>
-    {{#if reviews}}
     <div class="reviews">
-        {{#each reviews}}
         <div class="review">
-            <span class="name">{{firstName}}</span> <span class="place">{{place}}</span>
-            <p>{{review}}</p>
+            <span class="name">{{ properties.firstName }}</span> <span class="place">{{ properties.place }}</span>
+            <p>{{ properties.review }}</p>
         </div>
-        {{/each}}
     </div>
     <hr>
-    {{/if}}
     <form action="#">
         <span class="title">Ваш отзыв</span>
         <input id="firstName" name="firstName" type="text" placeholder="Ваше имя">

@@ -1,27 +1,46 @@
 import { EventEmitter } from './helpers';
-import balloonTemplate from '../templates/balloon.hbs';
-import CustomBalloon from './model/balloon';
+import balloonTemplate from '../templates/yballoon.html';
+import placemarkTemplate from '../templates/yplacemark.html';
+import clustererTemplate from '../templates/yclusterer.html';
+import Balloon from './model/balloon';
+import Cluster from './model/clusterer';
 
 export default class View extends EventEmitter {
     constructor() {
         super();
 
-        this.ymaps = ymaps;
-        this.ymaps.ready(this.handleReadyDocument.bind(this));
+        this.placemarks = new Map();
+
+        ymaps.ready(this.handleReadyDocument.bind(this));
 
         this.on('ready', this.inizializeMap.bind(this));
     }
 
     handleReadyDocument() {
-        this.map = new this.ymaps.Map('map', {
-            center: [59.939095, 30.315868], // Санкт-Петербург
-            zoom: 10
-        });
 
-        this.clusterer = new this.ymaps.Clusterer({
+        // Создание карты
+        this.map = new ymaps.Map('map', {
+            center: [59.939095, 30.315868], // Санкт-Петербург
+            zoom: 15
+        }, {
+                searchControlProvider: 'yandex#search'
+            });
+
+        // Добавление шаблонов
+        ymaps.layout.storage.add('my#balloonlayout', ymaps.templateLayoutFactory.createClass(balloonTemplate, Balloon));
+        ymaps.layout.storage.add('my#placemarklayout', ymaps.templateLayoutFactory.createClass(placemarkTemplate, Balloon));
+        ymaps.layout.storage.add('my#clustererlayout', ymaps.templateLayoutFactory.createClass(clustererTemplate, Cluster));
+
+        // Создание кластера
+        this.clusterer = new ymaps.Clusterer({
             preset: 'islands#invertedVioletClusterIcons',
             clusterDisableClickZoom: true,
-            openBalloonOnClick: false
+            clusterOpenBalloonOnClick: true,
+            clusterBalloonContentLayout: 'cluster#balloonCarousel',
+            clusterBalloonItemContentLayout: 'my#clustererlayout',
+            clusterBalloonPanelMaxMapArea: 0,
+            clusterBalloonContentLayoutWidth: 300,
+            clusterBalloonPagerSize: 5
         });
 
         this.map.geoObjects.add(this.clusterer);
@@ -30,21 +49,56 @@ export default class View extends EventEmitter {
     }
 
     handlerClick(e) {
-        const coords = e.get('coords');
+        this.emit('click', e);
+    }
 
-        const data = { address: 'Невский пр., 78, Санкт-Петербург, 191025',  };
-        const html = balloonTemplate(data);
+    addPlacemark(data) {
+        let placemarkData = Object.assign(data, { reviews: [{ firstName: data.firstName, place: data.place, review: data.review }] });
 
-        const balloonLayout = ymaps.templateLayoutFactory.createClass(html, CustomBalloon);
+        const key = data.coords + '';
+        if (this.placemarks.has(key)) {
+            let placemark = this.placemarks.get(key);
+            placemarkData.reviews = [...placemark.reviews, ...placemarkData.reviews];
+            this.placemarks.set(key, placemarkData);
+        } else {
+            this.placemarks.set(key, placemarkData);
+        }
 
-        this.map.balloon.open(coords, 'content', { layout: balloonLayout });
+        let placemark = new ymaps.Placemark(data.coords, placemarkData, {
+            balloonLayout: "my#placemarklayout"
+        });
+
+        placemark.events.add('click', (e) => { e.preventDefault(); this.openBalloon(placemarkData); });
+
+        this.clusterer.add(placemark);
+        return placemarkData;
+    }
+
+    handlerSubmit({ originalEvent }) {
+        const newPlacemark = this.addPlacemark(originalEvent);
+
+        this.map.balloon.setData(newPlacemark);
+    }
+
+    handlerLink({ originalEvent }) {
+        const key = originalEvent.coords + '';
+
+        if (key && this.placemarks.has(key)) {
+            const placemarkData = this.placemarks.get(key)
+
+            this.map.balloon.open(originalEvent.coords, placemarkData, { layout: 'my#balloonlayout' });
+        }
     }
 
     inizializeMap() {
         if (this.map) {
-
             this.map.events.add('click', this.handlerClick.bind(this));
-
+            this.map.events.add('link', this.handlerLink.bind(this));
+            this.map.balloon.events.add('submit', this.handlerSubmit.bind(this));
         }
+    }
+
+    openBalloon(data) {
+        this.map.balloon.open(data.coords, Object.assign(data, { map: this.map, balloon: this.map.balloon }), { layout: 'my#balloonlayout' });
     }
 }

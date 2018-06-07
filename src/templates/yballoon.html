@@ -1,20 +1,22 @@
 <div class="balloon">
     <div class="header">
         <div><i class="fas fa-map-marker"></i></div>
-        <div class="address">{{address}}</div>
+        <div class="address">{{ address }} </div>
         <div><i id="close" class="fas fa-plus fa-rotate-45"></i></div>
     </div>
-    {{#if reviews}}
     <div class="reviews">
-        {{#each reviews}}
+        {% if reviews && reviews.length > 0 %}
+        {% for review in reviews %}
         <div class="review">
-            <span class="name">{{firstName}}</span> <span class="place">{{place}}</span>
-            <p>{{review}}</p>
+            <span class="name">{{ review.firstName }}</span> <span class="place">{{ review.place }}</span>
+            <p>{{ review.review }}</p>
         </div>
-        {{/each}}
+        {% endfor %}
+        {% else %}
+        <h3>Отзывов пока нет...</h3>
+        {% endif %}
     </div>
     <hr>
-    {{/if}}
     <form action="#">
         <span class="title">Ваш отзыв</span>
         <input id="firstName" name="firstName" type="text" placeholder="Ваше имя">

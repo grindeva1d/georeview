@@ -71,6 +71,18 @@ body {
     padding: 16px;
 }
 
+.balloon .header > div {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.balloon .header > div.address {
+    width: 315px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .balloon .header .fa-plus {
     float: right;
     cursor: pointer;
@@ -147,6 +159,8 @@ body {
 .balloon form textarea {
     display: block;
     width: 100%;
+    max-width: 100%;
+    min-width: 100%;
     border: 1px solid #c4c4c4;
     padding: 10px 15px;
     box-sizing: border-box;
@@ -191,4 +205,27 @@ body {
     font-weight: 300;
     margin-top: 12px;
     float: right;
+    cursor: pointer;
+}
+
+.balloon form button:focus {
+    outline:0;
+}
+
+.clusterer_balloon_header {
+    font-size: 16px;
+    margin-top: 0;
+    margin-bottom: 10px;
+    color:  #4f4f4f;
+}
+
+.clusterer_balloon_body {
+    font-size: 14px;
+}
+
+.clusterer_balloon_footer {
+    font-size: 12px;
+    text-align: right;
+    color: #9f9f9f;
+    margin: 10px 0;
 }
