@@ -78,6 +78,7 @@ export default class View extends EventEmitter {
         const newPlacemark = this.addPlacemark(originalEvent);
 
         this.map.balloon.setData(newPlacemark);
+        this.emit('submit', newPlacemark);
     }
 
     handlerLink({ originalEvent }) {
@@ -100,5 +101,21 @@ export default class View extends EventEmitter {
 
     openBalloon(data) {
         this.map.balloon.open(data.coords, Object.assign(data, { map: this.map, balloon: this.map.balloon }), { layout: 'my#balloonlayout' });
+    }
+
+    render(placemarks) {
+
+        const newPlacemarks = placemarks
+        .map((placemark) => {
+            placemark.map = this.map;
+            placemark.balloon = this.map.balloon;
+            return new ymaps.Placemark(placemark.coords, placemark, { balloonLayout: "my#placemarklayout" })
+        })
+        .forEach((placemark) => {
+            placemark.events.add('click', (e) => { e.preventDefault(); this.openBalloon(placemarkData); });
+        });
+
+        this.clusterer.add(newPlacemarks);
+
     }
 }

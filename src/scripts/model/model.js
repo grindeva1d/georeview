@@ -1,13 +1,9 @@
+import { get, post } from '../helpers';
 import { EventEmitter } from "events";
 
 export default class Model extends EventEmitter {
     constructor() {
         super();
-    }
-
-    setMap(map) {
-        this.map = map;
-        this.placemarks = new Map();
     }
 
     async geocode(data, options = {}) {
@@ -22,9 +18,13 @@ export default class Model extends EventEmitter {
         return geoObject.getAddressLine() || geoObject.properties.get('name');
     }
 
-    addPlacemark({ firstName, place, review, coords, address }) {
-        this.placemarks[coords] = this.placemarks[coords] || [];
-        this.placemarks[coords].push({ address, firstName, place, review });
-        return this.placemarks[coords];
+    async getPlacemarks() {
+        let placemarks = await get('/api/placemarks');
+        return JSON.parse(placemarks);
+    }
+
+    async addPlacemark(placemark) {
+        let data = JSON.stringify(placemark);
+        return await post('/api/placemarks', data);
     }
 }
