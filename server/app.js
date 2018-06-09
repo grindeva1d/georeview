@@ -7,7 +7,7 @@ const db = require('./db');
 const app = express();
 const jsonParser = bodyParser.json();
 
-// app.use(express.static(__dirname + '/dist'));
+app.use(express.static(__dirname + '/dist'));
 
 app.use((request, response, next) => {
     var now = new Date();

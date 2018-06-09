@@ -7,7 +7,8 @@
     "codestyle": "eslint src",
     "build": "webpack",
     "watch": "webpack-dev-server --progress --colors --open --port 8080",
-    "start": "npm run watch"
+    "dev": "npm run watch",
+    "start": "node ./server/app.js"
   },
   "author": "",
   "license": "ISC",
