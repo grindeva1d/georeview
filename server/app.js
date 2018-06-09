@@ -3,11 +3,12 @@ const url = require('url');
 const fs = require('fs');
 const bodyParser = require('body-parser');
 const db = require('./db');
+const path = require('path');
 
 const app = express();
 const jsonParser = bodyParser.json();
 
-app.use(express.static(__dirname + '/dist'));
+app.use(express.static(path.resolve(__dirname + '/../dist')));
 
 app.use((request, response, next) => {
     var now = new Date();
