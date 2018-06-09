@@ -8,6 +8,9 @@ const path = require('path');
 const app = express();
 const jsonParser = bodyParser.json();
 
+console.log(process.env.PORT);
+const PORT = process.env.PORT || 5001;
+
 app.use(express.static(path.resolve(__dirname + '/../dist')));
 
 app.use((request, response, next) => {
@@ -56,4 +59,4 @@ app.post('/api/placemarks', jsonParser, function (request, response) {
     });    
 });
 
-app.listen(3000, '', () => console.log('start'));
+app.listen(PORT, '', () => console.log(`Node start listening on port: ${PORT}`));
