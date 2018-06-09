@@ -7,7 +7,7 @@ const db = require('./db');
 const app = express();
 const jsonParser = bodyParser.json();
 
-app.use(express.static(__dirname + '/dist'));
+// app.use(express.static(__dirname + '/dist'));
 
 app.use((request, response, next) => {
     var now = new Date();
@@ -21,13 +21,16 @@ app.use((request, response, next) => {
 });
 
 app.get('/api/placemarks', (request, response) => {
+
     db.getPlacemarks()
     .then((data) => {
         response.send(data);
     })
     .catch((reason) => {
-        
+        response.statusCode = 400;
+        response.send(reason);
     });
+
 });
 
 app.post('/api/placemarks', jsonParser, function (request, response) {
@@ -37,22 +40,18 @@ app.post('/api/placemarks', jsonParser, function (request, response) {
     let placemark = {};
     placemark.coords = request.body.coords;
     placemark.address = request.body.address;
-    placemark.date = request.body.date;
-    placemark.reviews = [{
-        firstName: request.body.firstName,
-        place: request.body.place,
-        review: request.body.review
-    }];
+    placemark.firstName = request.body.firstName,
+    placemark.place = request.body.place,
+    placemark.review = request.body.review,
+    placemark.date = request.body.date
 
-    console.log(request.body);
-    console.log(placemark);
-
-    db.addPlacemarks(placemark)
+    db.addPlacemark(placemark)
     .then((data) => {
         response.send(data);
     })
     .catch((reason) => {
-        
+        response.statusCode = 400;
+        response.send(reason);
     });    
 });
 

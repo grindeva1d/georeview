@@ -109,10 +109,10 @@ export default class View extends EventEmitter {
         .map((placemark) => {
             placemark.map = this.map;
             placemark.balloon = this.map.balloon;
-            return new ymaps.Placemark(placemark.coords, placemark, { balloonLayout: "my#placemarklayout" })
-        })
-        .forEach((placemark) => {
-            placemark.events.add('click', (e) => { e.preventDefault(); this.openBalloon(placemarkData); });
+            let _pl = new ymaps.Placemark(placemark.coords, placemark, { balloonLayout: "my#placemarklayout" })
+
+            _pl.events.add('click', (e) => { e.preventDefault(); this.openBalloon(placemark); });
+            return _pl;
         });
 
         this.clusterer.add(newPlacemarks);

@@ -28,6 +28,11 @@ module.exports = {
     performance: {
         hints: false
     },
+    devServer: {
+        proxy: {
+            '/api': 'http://localhost:3000'
+        }
+    },
     devtool: 'source-map',
     module: { rules },
     // optimization: {

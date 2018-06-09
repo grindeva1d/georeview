@@ -6,7 +6,7 @@
   "scripts": {
     "codestyle": "eslint src",
     "build": "webpack",
-    "watch": "webpack-dev-server --progress --colors --open",
+    "watch": "webpack-dev-server --progress --colors --open --port 8080",
     "start": "npm run watch"
   },
   "author": "",
@@ -34,6 +34,7 @@
     "body-parser": "^1.18.3",
     "express": "^4.16.3",
     "mongodb": "^3.0.10",
+    "mongoose": "^5.1.4",
     "normalize.css": "^8.0.0"
   }
 }

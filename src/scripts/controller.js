@@ -33,11 +33,13 @@ export default class Controller {
     async onMapSubmit([data]) {
 
         const placemark = {};
+
         placemark.address = data.address;
         placemark.coords = data.coords;
         placemark.date = data.date;
         placemark.firstName = data.firstName;
         placemark.place = data.place;
+        placemark.review = data.review;
 
         await this.model.addPlacemark(placemark);
     }
