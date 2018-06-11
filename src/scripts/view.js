@@ -9,11 +9,18 @@ export default class View extends EventEmitter {
     constructor() {
         super();
 
+        // this.mapElement = document.querySelector('#map');
         this.placemarks = new Map();
 
+        // window.onload = this.handlerWindowLoad.bind(this);
         ymaps.ready(this.handleReadyDocument.bind(this));
 
         this.on('ready', this.inizializeMap.bind(this));
+    }
+
+    handlerWindowLoad() {
+        this.mapElement.style.height = `${window.innerHeight}px`;
+        this.mapElement.style.width =  `${window.innerWidth}px`;
     }
 
     handleReadyDocument() {
@@ -93,9 +100,13 @@ export default class View extends EventEmitter {
 
     inizializeMap() {
         if (this.map) {
+
+            //this.mapElement
+
             this.map.events.add('click', this.handlerClick.bind(this));
             this.map.events.add('link', this.handlerLink.bind(this));
             this.map.balloon.events.add('submit', this.handlerSubmit.bind(this));
+
         }
     }
 

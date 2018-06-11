@@ -33,6 +33,7 @@ export function get(url) {
         };
 
         xhr.send();
+        
     });
 }
 

@@ -11,8 +11,12 @@ export default class Controller {
 
     async onMapReady([event]) {
 
-        let placemarks = await this.model.getPlacemarks();
-        this.view.render(placemarks);
+        try {
+            let placemarks = await this.model.getPlacemarks();
+            this.view.render(placemarks);
+        } catch (error) {
+            console.log(error);
+        }
 
     }
 
