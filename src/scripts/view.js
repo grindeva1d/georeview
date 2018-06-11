@@ -52,17 +52,21 @@ export default class View extends EventEmitter {
         this.emit('click', e);
     }
 
-    addPlacemark(data) {
-        let placemarkData = Object.assign(data, { reviews: [{ firstName: data.firstName, place: data.place, review: data.review }] });
-
+    addPlacemarkToCache(data) {
         const key = data.coords + '';
         if (this.placemarks.has(key)) {
             let placemark = this.placemarks.get(key);
-            placemarkData.reviews = [...placemark.reviews, ...placemarkData.reviews];
-            this.placemarks.set(key, placemarkData);
+            data.reviews = [...placemark.reviews, ...data.reviews];
+            this.placemarks.set(key, data);
         } else {
-            this.placemarks.set(key, placemarkData);
+            this.placemarks.set(key, data);
         }
+    }
+
+    addPlacemark(data) {
+        let placemarkData = Object.assign(data, { reviews: [{ firstName: data.firstName, place: data.place, review: data.review }] });
+
+        this.addPlacemarkToCache(placemarkData);
 
         let placemark = new ymaps.Placemark(data.coords, placemarkData, {
             balloonLayout: "my#placemarklayout"
@@ -107,6 +111,10 @@ export default class View extends EventEmitter {
 
         const newPlacemarks = placemarks
         .map((placemark) => {
+            
+            placemark = Object.assign(placemark, { reviews: [{ firstName: placemark.firstName, place: placemark.place, review: placemark.review }] });
+            this.addPlacemarkToCache(placemark);
+
             placemark.map = this.map;
             placemark.balloon = this.map.balloon;
             let _pl = new ymaps.Placemark(placemark.coords, placemark, { balloonLayout: "my#placemarklayout" })
